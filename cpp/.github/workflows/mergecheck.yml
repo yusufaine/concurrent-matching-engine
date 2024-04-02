@@ -1,0 +1,58 @@
+# This workflow runs the random test suite with ASAN and TSAN only when the label "mergecheck" is added to the pull request.
+
+name: Merge check
+
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  ASAN_mergecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for mergecheck label
+        if: contains(github.event.pull_request.labels.*.name, 'mergecheck')
+        run: echo "Running mergecheck tests with ASAN"
+
+      - name: Checkout repository and branch
+        uses: actions/checkout@v4
+
+      - name: Install LLVM and Clang
+        uses: KyleMayes/install-llvm-action@v1
+        with:
+          version: "16.0"
+      
+      - name: Install python3
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      
+      - name: Build engine and run test script with ASAN
+        run: |
+          make address
+          ./scripts/randomtest.sh 100
+
+  TSAN_mergecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for mergecheck label
+        if: contains(github.event.pull_request.labels.*.name, 'mergecheck')
+        run: echo "Running mergecheck tests with TSAN"
+
+      - name: Checkout repository and branch
+        uses: actions/checkout@v4
+
+      - name: Install LLVM and Clang
+        uses: KyleMayes/install-llvm-action@v1
+        with:
+          version: "16.0"
+      
+      - name: Install python3
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Build engine and run test script with ASAN
+        run: |
+          make thread
+          ./scripts/randomtest.sh 100

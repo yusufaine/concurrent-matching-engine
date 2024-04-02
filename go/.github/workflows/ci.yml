@@ -1,0 +1,30 @@
+name: Test runner
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo and branch
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.22
+          go-version-file: go.mod
+
+      - name: Package tests with race flag
+        run: GORACE="halt_on_error=1" go test -v ./...
+
+      - name: Grader test script
+        run: ./scripts/run_tests.sh
+
+      - name: Run stress tests with race flag
+        run: |
+          make race
+          ./scripts/randomtest.sh 100

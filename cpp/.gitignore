@@ -1,0 +1,11 @@
+engine
+client
+/build
+/.deps
+compile_commands.json
+.cache
+.vscode
+.idea
+.tmp
+compose-dev.yaml
+socket

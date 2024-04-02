@@ -1,0 +1,35 @@
+name: Test runner
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+
+jobs:
+  ASAN_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository and branch
+        uses: actions/checkout@v4
+
+      - name: Install LLVM and Clang
+        uses: KyleMayes/install-llvm-action@v1
+        with:
+          version: "16.0"
+      
+      - name: Build engine and run test script with ASAN
+        run: ./scripts/run_tests.sh address
+
+  TSAN_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository and branch
+        uses: actions/checkout@v4
+
+      - name: Install LLVM and Clang
+        uses: KyleMayes/install-llvm-action@v1
+        with:
+          version: "16.0"
+      
+      - name: Build engine and run test script with TSAN
+        run: ./scripts/run_tests.sh thread
